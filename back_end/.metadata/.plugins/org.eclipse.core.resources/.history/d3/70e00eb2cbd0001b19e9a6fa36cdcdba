@@ -1,0 +1,49 @@
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final JwtTokenProvider jwtTokenProvider;
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .httpBasic().disable()
+                .cors().configurationSource(corsConfigurationSource())  ---------- (1)
+//                .headers().frameOptions().disable()
+                .and()
+                    .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                    .authorizeRequests()
+                        .antMatchers("/api/v1/shops/**").hasRole("OWNER")
+                        .antMatchers(HttpMethod.PUT, "/api/v1/users/**").hasAnyRole("USER", "OWNER")
+                        .antMatchers(HttpMethod.DELETE, "/api/v1/users/**").hasAnyRole("USER", "OWNER")
+                        .antMatchers(HttpMethod.GET, "/api/v1/users/").hasAnyRole("USER", "OWNER")
+                        .anyRequest().permitAll()
+                .and()
+                    .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
+                            UsernamePasswordAuthenticationFilter.class);
+
+
+    }
+    
+    // CORS 허용 적용
+    @Bean --------- (2)
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.addAllowedOrigin("*");
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+ }

@@ -53,6 +53,7 @@ class EditUserComponent extends Component{
         e.preventDefault();
 
         let user = {
+            id : this.state.id,
             username : this.state.username,
             password : this.state.password,
             firstName : this.state.firstName,

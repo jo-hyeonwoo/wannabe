@@ -1,11 +1,12 @@
 import axios from "axios";
 
+
 const USER_API_BASE_URL = "http://localhost:8080/users";
 
 class ApiService{
 
     fetchUsers(){
-        return axios.get(USER_API_BASE_URL);
+        return axios.get(USER_API_BASE_URL+'/');
     }
 
     fetchUserByID(userID){
@@ -17,11 +18,15 @@ class ApiService{
     }
 
     addUser(user){
-        return axios.post(USER_API_BASE_URL+'/'+user);
+        return axios.post(USER_API_BASE_URL+'/', user, {
+            headers:{
+                "Content-Type" : 'application/json'
+            }
+        }).then((res)=>console.log(res));
     }
 
     editUser(user){
-        return axios.put(USER_API_BASE_URL+'/'+user.id, user)
+        return axios.put(USER_API_BASE_URL+'/'+user.id, user);
     }
 }
 export default new ApiService();

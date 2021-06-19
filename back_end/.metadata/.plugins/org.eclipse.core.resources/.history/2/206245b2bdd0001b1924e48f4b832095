@@ -1,0 +1,22 @@
+package com.example.demo.config;
+
+import java.io.IOException;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
+
+public class CORSFilter implements Filter{
+
+	@Override
+	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+			throws IOException, ServletException {
+		System.out.println("필터링 진행중입니다."); //콘솔창에서 거슬린다면 주석처리
+		HttpServletResponse response = (HttpServletResponse)res;
+		response.setHeader("Access-Control-Allow-Origin", "*");
+	}
+	
+}
